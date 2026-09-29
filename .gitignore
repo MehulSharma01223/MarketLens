@@ -1,5 +1,6 @@
-# Raw datasets
-data/raw/*.csv
+# Raw and Processed datasets
+data/
+data/*
 
 # Python
 __pycache__/
