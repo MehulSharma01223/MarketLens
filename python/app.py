@@ -175,3 +175,53 @@ with col_right:
         hole=0.4
     )
     st.plotly_chart(fig_rfm, use_container_width=True)
+
+# --- Section 5: Machine Learning Delivery Delay Predictor ---
+st.divider()
+st.subheader("5. 🤖 Predictive Analytics: Order Delivery Delay Predictor")
+st.markdown("Enter order details to predict whether it will be delivered on time or delayed.")
+
+import joblib
+from pathlib import Path
+
+MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
+try:
+    model = joblib.load(MODEL_DIR / "delivery_delay_model.pkl")
+    le_cust = joblib.load(MODEL_DIR / "le_customer_state.pkl")
+    le_sell = joblib.load(MODEL_DIR / "le_seller_state.pkl")
+    
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p1:
+        p_price = st.number_input("Product Price ($)", min_value=1.0, value=100.0)
+        p_freight = st.number_input("Freight Value ($)", min_value=0.0, value=20.0)
+        p_weight = st.number_input("Product Weight (g)", min_value=10.0, value=1000.0)
+    with col_p2:
+        p_len = st.number_input("Length (cm)", min_value=1.0, value=30.0)
+        p_height = st.number_input("Height (cm)", min_value=1.0, value=10.0)
+        p_width = st.number_input("Width (cm)", min_value=1.0, value=20.0)
+    with col_p3:
+        cust_st = st.selectbox("Customer State", le_cust.classes_)
+        sell_st = st.selectbox("Seller State", le_sell.classes_)
+        p_month = st.slider("Purchase Month", 1, 12, 6)
+        p_dow = st.slider("Purchase Day of Week (0=Mon)", 0, 6, 2)
+
+    if st.button("Predict Delay Risk"):
+        # Encode categorical inputs safely
+        c_enc = le_cust.transform([cust_st])[0] if cust_st in le_cust.classes_ else 0
+        s_enc = le_sell.transform([sell_st])[0] if sell_st in le_sell.classes_ else 0
+        
+        input_data = [[
+            p_price, p_freight, p_weight, p_len, p_height, p_width,
+            c_enc, s_enc, p_month, p_dow
+        ]]
+        
+        prediction = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0][1]
+        
+        if prediction == 1:
+            st.error(f"⚠️ High Risk: This order is predicted to be **DELAYED**! (Probability: {probability:.1%})")
+        else:
+            st.success(f"✅ Low Risk: This order is predicted to be delivered **ON TIME**. (Delay Probability: {probability:.1%})")
+            
+except Exception as e:
+    st.warning(f"Model files not found or failed to load. Make sure `train_delay_model.py` has been run successfully. Error: {e}")
