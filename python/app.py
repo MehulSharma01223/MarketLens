@@ -18,7 +18,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🛍️ MarketLens: E-Commerce Executive Dashboard")
+st.title(" MarketLens: E-Commerce Executive Dashboard")
 st.markdown("PostgreSQL Analytics, Business Intelligence, & Machine Learning Engine")
 
 engine = get_db_engine()
@@ -189,7 +189,7 @@ with col_right:
 
 # --- Section 5: Machine Learning Delivery Delay Predictor ---
 st.divider()
-st.subheader("5. 🤖 Predictive Analytics: Order Delivery Delay Predictor")
+st.subheader("5.  Predictive Analytics: Order Delivery Delay Predictor")
 st.markdown("Enter order specifications below to evaluate the real-time risk of delivery delays.")
 
 MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
@@ -226,9 +226,9 @@ try:
         probability = model.predict_proba(input_data)[0][1]
         
         if prediction == 1:
-            st.error(f"⚠️ High Risk: This order is predicted to be **DELAYED**! (Probability: {probability:.1%})")
+            st.error(f" High Risk: This order is predicted to be **DELAYED**! (Probability: {probability:.1%})")
         else:
-            st.success(f"✅ Low Risk: This order is predicted to arrive **ON TIME**. (Delay Probability: {probability:.1%})")
+            st.success(f" Low Risk: This order is predicted to arrive **ON TIME**. (Delay Probability: {probability:.1%})")
             
 except Exception as e:
     st.warning(f"ML model files could not be loaded. Ensure `train_delay_model.py` has been executed. Details: {e}")
