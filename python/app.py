@@ -1,6 +1,6 @@
 """
-MarketLens: Interactive E-Commerce Analytics Dashboard
-Phase 5: Streamlit Application
+MarketLens: Interactive E-Commerce Analytics Dashboard & ML Engine
+Phase 5/6: Streamlit Application
 """
 
 import streamlit as st
@@ -8,11 +8,18 @@ import pandas as pd
 import plotly.express as px
 from sqlalchemy import text
 from db_connection import get_db_engine
+import joblib
+from pathlib import Path
 
-st.set_page_config(page_title="MarketLens Analytics", layout="wide")
+# Page Configuration
+st.set_page_config(
+    page_title="MarketLens Analytics & Intelligence Engine",
+    page_icon="📊",
+    layout="wide"
+)
 
-st.title("📊 MarketLens: E-Commerce Executive Dashboard")
-st.markdown("PostgreSQL Analytics & Business Intelligence Engine")
+st.title("🛍️ MarketLens: E-Commerce Executive Dashboard")
+st.markdown("PostgreSQL Analytics, Business Intelligence, & Machine Learning Engine")
 
 engine = get_db_engine()
 
@@ -78,7 +85,7 @@ st.plotly_chart(fig_rev, use_container_width=True)
 
 st.divider()
 
-# --- Section 3: Categories & RFM Distribution ---
+# --- Section 3: Categories & RFM Distribution (Clean English) ---
 col_left, col_right = st.columns(2)
 
 with col_left:
@@ -99,6 +106,9 @@ with col_left:
     with engine.connect() as conn:
         cat_df = pd.read_sql_query(text(cat_query), conn)
     
+    # Clean category names to professional Title Case English
+    cat_df['category_name'] = cat_df['category_name'].str.replace('_', ' ').str.title()
+    
     fig_cat = px.bar(
         cat_df,
         x="category_revenue",
@@ -109,7 +119,7 @@ with col_left:
         color="category_revenue",
         color_continuous_scale="Blues"
     )
-    fig_cat.update_layout(yaxis=dict(autorange="reversed"))
+    fig_cat.update_layout(yaxis=dict(autorange="reversed"), margin=dict(l=0, r=0, t=30, b=0))
     st.plotly_chart(fig_cat, use_container_width=True)
 
 with col_right:
@@ -174,15 +184,13 @@ with col_right:
         title="Revenue Distribution by RFM Segment",
         hole=0.4
     )
+    fig_rfm.update_layout(margin=dict(l=0, r=0, t=30, b=0))
     st.plotly_chart(fig_rfm, use_container_width=True)
 
 # --- Section 5: Machine Learning Delivery Delay Predictor ---
 st.divider()
 st.subheader("5. 🤖 Predictive Analytics: Order Delivery Delay Predictor")
-st.markdown("Enter order details to predict whether it will be delivered on time or delayed.")
-
-import joblib
-from pathlib import Path
+st.markdown("Enter order specifications below to evaluate the real-time risk of delivery delays.")
 
 MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
 try:
@@ -192,21 +200,20 @@ try:
     
     col_p1, col_p2, col_p3 = st.columns(3)
     with col_p1:
-        p_price = st.number_input("Product Price ($)", min_value=1.0, value=100.0)
-        p_freight = st.number_input("Freight Value ($)", min_value=0.0, value=20.0)
-        p_weight = st.number_input("Product Weight (g)", min_value=10.0, value=1000.0)
+        p_price = st.number_input("Product Price ($)", min_value=1.0, value=120.0)
+        p_freight = st.number_input("Freight / Shipping Cost ($)", min_value=0.0, value=25.0)
+        p_weight = st.number_input("Product Weight (grams)", min_value=10.0, value=1200.0)
     with col_p2:
-        p_len = st.number_input("Length (cm)", min_value=1.0, value=30.0)
-        p_height = st.number_input("Height (cm)", min_value=1.0, value=10.0)
-        p_width = st.number_input("Width (cm)", min_value=1.0, value=20.0)
+        p_len = st.number_input("Length (cm)", min_value=1.0, value=35.0)
+        p_height = st.number_input("Height (cm)", min_value=1.0, value=15.0)
+        p_width = st.number_input("Width (cm)", min_value=1.0, value=25.0)
     with col_p3:
         cust_st = st.selectbox("Customer State", le_cust.classes_)
         sell_st = st.selectbox("Seller State", le_sell.classes_)
         p_month = st.slider("Purchase Month", 1, 12, 6)
-        p_dow = st.slider("Purchase Day of Week (0=Mon)", 0, 6, 2)
+        p_dow = st.slider("Purchase Day of Week (0=Monday)", 0, 6, 2)
 
-    if st.button("Predict Delay Risk"):
-        # Encode categorical inputs safely
+    if st.button("Evaluate Delay Risk", type="primary"):
         c_enc = le_cust.transform([cust_st])[0] if cust_st in le_cust.classes_ else 0
         s_enc = le_sell.transform([sell_st])[0] if sell_st in le_sell.classes_ else 0
         
@@ -221,7 +228,7 @@ try:
         if prediction == 1:
             st.error(f"⚠️ High Risk: This order is predicted to be **DELAYED**! (Probability: {probability:.1%})")
         else:
-            st.success(f"✅ Low Risk: This order is predicted to be delivered **ON TIME**. (Delay Probability: {probability:.1%})")
+            st.success(f"✅ Low Risk: This order is predicted to arrive **ON TIME**. (Delay Probability: {probability:.1%})")
             
 except Exception as e:
-    st.warning(f"Model files not found or failed to load. Make sure `train_delay_model.py` has been run successfully. Error: {e}")
+    st.warning(f"ML model files could not be loaded. Ensure `train_delay_model.py` has been executed. Details: {e}")
