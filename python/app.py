@@ -395,7 +395,7 @@ def check_api_health() -> Tuple[bool, Dict[str, Any]]:
 opts = fetch_filter_options()
 
 with st.sidebar:
-    st.markdown("### 📊 MarketLens SaaS")
+    st.markdown("###  MarketLens SaaS")
     st.caption("D2C E-Commerce & ML Intelligence")
     nav_page = st.radio(
         "Navigation",
@@ -409,7 +409,7 @@ with st.sidebar:
         index=0,
     )
     st.divider()
-    st.markdown("#### 🔍 Global Data Filters")
+    st.markdown("####  Global Data Filters")
     date_range = st.date_input(
         "Purchase Date Range",
         value=(opts["min_date"], opts["max_date"]),
@@ -520,7 +520,7 @@ if nav_page == "1. Executive Overview":
         st.markdown(
             f"""
             <div class="ml-insight-box">
-                💡 <b>Executive Insight:</b> Peak monthly revenue occurred in <b>{peak_rev_row['sales_month']}</b>
+                 <b>Executive Insight:</b> Peak monthly revenue occurred in <b>{peak_rev_row['sales_month']}</b>
                 generating <b>R$ {peak_rev_row['monthly_revenue']:,.2f}</b>, while highest order volume reached
                 <b>{int(peak_ord_row['order_count']):,} orders</b> in <b>{peak_ord_row['sales_month']}</b>.
             </div>
@@ -584,7 +584,7 @@ elif nav_page == "5. ML Prediction Lab":
         # Model Performance Metrics (3 per row)
         if metadata and "metrics" in metadata:
             metrics = metadata["metrics"]
-            st.markdown("### 📋 Model Performance Metrics")
+            st.markdown("###  Model Performance Metrics")
             
             m1, m2, m3 = st.columns(3)
             with m1:
@@ -601,7 +601,7 @@ elif nav_page == "5. ML Prediction Lab":
         st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
         # Horizontal Row-Wise Input Fields Setup
-        st.markdown("### 🎛️ Order Specification & Risk Prediction")
+        st.markdown("###  Order Specification & Risk Prediction")
         
         # Row 1: Price, Freight, Weight
         r1_c1, r1_c2, r1_c3 = st.columns(3)
@@ -699,14 +699,14 @@ elif nav_page == "5. ML Prediction Lab":
         # Prediction Result Banner
         source_badge = "Flask API" if used_api else "Local Fallback"
         if prediction == 1 or probability >= 0.50:
-            st.error(f"⚠️ **High Risk — Predicted DELAYED** (Delay Probability: **{probability:.1%}** | Source: `{source_badge}`)\n\n{interpretation}")
+            st.error(f" **High Risk — Predicted DELAYED** (Delay Probability: **{probability:.1%}** | Source: `{source_badge}`)\n\n{interpretation}")
         elif probability >= 0.30:
-            st.warning(f"⚡ **Moderate Risk — Predicted ON TIME with Caution** (Delay Probability: **{probability:.1%}** | Source: `{source_badge}`)\n\n{interpretation}")
+            st.warning(f" **Moderate Risk — Predicted ON TIME with Caution** (Delay Probability: **{probability:.1%}** | Source: `{source_badge}`)\n\n{interpretation}")
         else:
-            st.success(f"✅ **Low Risk — Predicted ON TIME** (Delay Probability: **{probability:.1%}** | Source: `{source_badge}`)\n\n{interpretation}")
+            st.success(f" **Low Risk — Predicted ON TIME** (Delay Probability: **{probability:.1%}** | Source: `{source_badge}`)\n\n{interpretation}")
 
         st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-        st.markdown("### 📊 Model Diagnostics & Feature Analysis")
+        st.markdown("###  Model Diagnostics & Feature Analysis")
 
         # =====================================================================
         # GRAPHS PLACED STRICTLY BELOW PREDICTION RESULTS IN ROWS
