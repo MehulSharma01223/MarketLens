@@ -10,8 +10,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "python"))
 
-from api import create_app  # noqa: E402
-
+from api import create_app  # noqa: E402  # type: ignore
 
 @pytest.fixture
 def client():
